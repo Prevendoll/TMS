@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Status Management</title>
+  <style>
+    .table-button {
+      width: 150px;
+      height: 60px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+      background-color: #e0e0e0;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .button-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: center; /* 横方向中央配置 */
+    }
+    .top {
+      text-align: center;
+    }
+    .form, .forms {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      height: 40px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .botandesign {
+      display: flex;
+      justify-content: center; /* 横方向中央配置 */
+      align-items: center; /* 縦方向中央配置 */
+      margin-top: 30px;
+    /*  height: 50vh; ビューポートの高さに合わせる */
+    }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h1>座席利用状況</h1>
+    <input type="number" class="form" id="table_number" min="1" max="200">
+    <button class="forms" onclick="showTableStatus()">表示させたいテーブル数を入力</button>
+  </div>
+  <div class="botandesign">
+    <div id="table_status"></div>
+  </div>
+  <script>
+    function showTableStatus() {
+      var tableNumber = parseInt(document.getElementById("table_number").value);
+      var tableStatuses = ["空席", "注文待ち", "調理中", "食事中", "片づけ待ち"];
+      var initialStatus = tableStatuses[0];
+
+      var tableStatusContainer = document.getElementById("table_status");
+      tableStatusContainer.innerHTML = "";
+
+      var buttonRow = document.createElement("div");
+
+      for (var i = 1; i <= tableNumber; i++) {
+        createTableButton(i, initialStatus, tableStatuses, buttonRow);
+
+        if (i % 5 === 0 || i === tableNumber) {
+          tableStatusContainer.appendChild(buttonRow);
+          buttonRow = document.createElement("div");
+        }
+      }
+
+      function createTableButton(seatNumber, initialStatus, statuses, row) {
+        var button = document.createElement("button");
+        button.className = "table-button";
+        button.innerHTML = seatNumber + "番: " + initialStatus;
+        button.onclick = function () {
+          var currentStatus = statuses.indexOf(button.innerHTML.split(":")[1].trim());
+          var newStatusIndex = (currentStatus + 1) % statuses.length;
+          button.innerHTML = seatNumber + "番: " + statuses[newStatusIndex];
+          button.style.backgroundColor = getStatusColor(statuses[newStatusIndex]);
+          button.style.color = getStatusTextColor(statuses[newStatusIndex]);
+        };
+        row.appendChild(button);
+      }
+
+      function getStatusColor(status) {
+        switch (status) {
+          case "空席":
+            return "#E0E0E0";
+          case "注文待ち":
+            return "yellow";
+          case "調理中":
+            return "red";
+          case "食事中":
+            return "green";
+          case "片づけ待ち":
+            return "blue";
+          default:
+            return "white";
+        }
+      }
+
+      function getStatusTextColor(status) {
+        return (status === "空席" || status === "注文待ち") ? "black" : "white";
+      }
+    }
+  </script>
+</body>
+</html>
